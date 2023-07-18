@@ -19,6 +19,8 @@ add_library(graphics STATIC
   src/Scene.cpp
   src/spheres.hpp
   src/spheres.cpp
+  src/cylinders.hpp
+  src/cylinders.cpp
 )
 
 target_include_directories(graphics PUBLIC ${PROJECT_SOURCE_DIR}/src)

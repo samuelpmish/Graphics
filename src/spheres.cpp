@@ -35,19 +35,17 @@ in vec4 sphere;
 
 in vec3 corners;
 
-//out sphereData {
-//  vec3 center;
-//  float radius;
-//  vec4 color;
-//} outData;
+out vec3 sphere_center;
+out float sphere_radius;
+out vec3 position;
 
 uniform mat4 proj;
 
 void main() {
-  //outData.center = sphere.xyz;
-  //outData.radius = sphere.w;
-  //outData.color = vec4(1.0, 0.0, 0.0, 1.0);
-  gl_Position = proj * vec4(sphere.w * corners + sphere.xyz, 1);
+  sphere_center = sphere.xyz;
+  sphere_radius = sphere.w;
+  position = sphere.w * corners + sphere.xyz;
+  gl_Position = proj * vec4(position, 1);
 }
 )vert");
 
@@ -59,11 +57,9 @@ const std::string frag_shader(R"frag(
 //  vec3 position;
 //} inData;
 
-//in sphereData {
-//  vec3 center;
-//  float radius;
-//  vec4 color;
-//} sphere;
+in vec3 sphere_center;
+in float sphere_radius;
+in vec3 position;
 
 out vec4 frag_color;
 
@@ -72,35 +68,35 @@ uniform mat4 proj;
 
 void main() {
 
-//  frag_color = inData.color;
-//
-//  float R = sphere.radius;
-//
-//  // relative sphere location
-//  vec3 S = sphere.center - camera_position;
-//
-//  // ray direction
-//  vec3 D = normalize(inData.position - camera_position);
-//  
-//  // quadratic equation coefficients (A is always 1)
-//  float B = -2.0 * dot(D, S);
-//  float C = dot(S, S) - (R * R);
-//  
-//  float discr = (B * B) - (4 * C);
-//  float delta = fwidth(discr);
-//  float alpha = smoothstep(0, delta, discr);
-//  float depth = 1.0 - smoothstep(-delta * 0.5, delta * 0.5, discr);
-//  frag_color.a *= alpha;
-//
-//  float t = (-B - sqrt(max(discr, 0.0))) / 2.0;
-//
-//  vec3 p = camera_position + D * t;
-//
-//  vec4 clip = proj * vec4(p, 1.0);
-//  float ndcDepth = clip.z / clip.w;
-//  gl_FragDepth = (((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0) + depth;
+  frag_color = vec4(1,0,0,1);
 
-  frag_color = vec4(1.0, 0.0, 1.0, 1.0);
+  float R = sphere_radius;
+
+  // relative sphere location
+  vec3 S = sphere_center - camera_position;
+
+  // ray direction
+  vec3 D = normalize(position - camera_position);
+  
+  // quadratic equation coefficients (A is always 1)
+  float B = -2.0 * dot(D, S);
+  float C = dot(S, S) - (R * R);
+  
+  float discr = (B * B) - (4 * C);
+  float delta = fwidth(discr);
+  float alpha = smoothstep(0, delta, discr);
+  float depth = 1.0 - smoothstep(-delta * 0.5, delta * 0.5, discr);
+  frag_color.a *= alpha;
+
+  float t = (-B - sqrt(max(discr, 0.0))) / 2.0;
+
+  vec3 p = camera_position + D * t;
+
+  vec4 clip = proj * vec4(p, 1.0);
+  float ndcDepth = clip.z / clip.w;
+  gl_FragDepth = (((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0) + depth;
+
+  frag_color = vec4(1.0, 1.0, 1.0, 1.0);
 
 }
 )frag");
@@ -150,7 +146,9 @@ void Spheres::draw(const Camera & camera) {
 
   //auto v = camera.up();
   //auto h = glm::normalize(glm::cross(v, camera.m_pos - camera.m_focus));
-  glUniformMatrix4fv(program.uniform("proj"), 1, GL_FALSE, glm::value_ptr(proj));
+  glUniformMatrix4fv(program.uniform("proj"), 1, GL_FALSE, glm::value_ptr(camera.matrix()));
+
+  program.setUniform("camera_position", camera.pos());
 
   glBindVertexArray(vao);
   if (dirty) {
@@ -160,9 +158,9 @@ void Spheres::draw(const Camera & camera) {
   }
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_ebo);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glDrawElementsInstanced(GL_TRIANGLES, 6*6, GL_UNSIGNED_INT, 0, data.size());
 
-  program.use();
+  program.unuse();
 
 }
