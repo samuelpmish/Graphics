@@ -82,14 +82,14 @@ struct Molecule {
       Sphere mid = {(atoms[bond[0]].center + atoms[bond[1]].center) * 0.5f, bond_radius};
       Sphere end = atoms[bond[1]];
 
-      start.radius = end.radius = bond_radius;
+      start.radius = mid.radius = end.radius = bond_radius * ((bond[2] == 2) ? 2.0 : 1.0);
 
       bonds.push_back(Cylinder{start, mid});
       bond_colors.push_back(atom_colors[bond[0]]);
 
       bonds.push_back(Cylinder{mid, end});
       bond_colors.push_back(atom_colors[bond[1]]);
-    }
+   }
 
     Molecule m;
     m.spheres.append(atoms, atom_colors);
