@@ -40,7 +40,7 @@ struct Molecule {
 
   static Molecule import_from_json(std::string filename) {
 
-    float atom_radius = 0.4; 
+    float atom_radius = 0.3; 
     float bond_radius = 0.1; 
 
     // read the contents of the entire file into str
@@ -65,7 +65,7 @@ struct Molecule {
     for (auto & atom : j["atoms"]) {
       atoms.push_back(Sphere{
         {atom["coordinates"][0], atom["coordinates"][1], atom["coordinates"][2]}, 
-        0.3
+        atom_radius
       });
       atom_colors.push_back(color_from_atomic_number.at(atom["atomic_number"].get<uint32_t>()));
 
