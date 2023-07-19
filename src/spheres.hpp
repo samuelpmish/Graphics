@@ -24,9 +24,9 @@ struct Spheres {
  private:
   bool dirty;
   GLuint vao;
-  GLuint cube_vbo; 
-  GLuint cube_ebo;
   GLuint sphere_vbo;
+  GLuint instance_vbo; 
+  GLuint instance_ebo;
 
   ShaderProgram program;
 

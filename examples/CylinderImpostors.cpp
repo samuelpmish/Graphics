@@ -180,7 +180,7 @@ void Canvas::generate_cylinders() {
     s[i].endpoints[1].center[0] = w * (2.0f * distribution(generator) - 1);
     s[i].endpoints[1].center[1] = w * (2.0f * distribution(generator) - 1);
     s[i].endpoints[1].center[2] = w * (2.0f * distribution(generator) - 1);
-    s[i].endpoints[1].radius = radius;
+    s[i].endpoints[1].radius = 3 * radius;
   }
 
   cylinders.clear();

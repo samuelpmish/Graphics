@@ -37,9 +37,10 @@ class Camera {
 
     void lookAt(const glm::vec3 & next_pos, const glm::vec3 & next_focus, const glm::vec3 & next_up = {0, 0, 1});
 
+    const glm::vec3 & up() const;
     const glm::vec3 & pos() const;
     const glm::vec3 & focus() const;
-    const glm::vec3 & up() const;
+    const glm::vec3 direction() const;
 
     void set_up(const glm::vec3 & next_up);
     void set_pos(const glm::vec3 & next_pos);

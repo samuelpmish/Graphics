@@ -39,6 +39,10 @@ const glm::vec3 & Camera::focus() const {
   return m_focus;
 }
 
+const glm::vec3 Camera::direction() const {
+  return normalize(m_focus - m_pos);
+}
+
 const glm::vec3 & Camera::up() const {
   return m_up;
 }

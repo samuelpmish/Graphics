@@ -8,54 +8,41 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_operation.hpp>
 
-static float cube_vertices[24] = {
-	-1.0f, -1.0f,  1.0f,
-	 1.0f, -1.0f,  1.0f,
-	 1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f, -1.0f,
-	-1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f, -1.0f,
-	-1.0f,  1.0f, -1.0f
+static float instance_vertices[24] = {
+	-1.0f, -1.0f,
+	 1.0f, -1.0f,
+	 1.0f, +1.0f,
+	-1.0f, +1.0f,
 };
 
-static uint32_t cube_indices[36] = {
-	1, 2, 6, 6, 5, 1, // Right
-	0, 4, 7, 7, 3, 0, // Left
-	4, 5, 6, 6, 7, 4, // Top
-	0, 3, 2, 2, 1, 0, // Bottom
-	0, 1, 5, 5, 4, 0, // Back
-	3, 7, 6, 6, 2, 3  // Front
-};
+static uint32_t instance_triangles[4] = {1, 2, 0, 3};
 
 const std::string vert_shader(R"vert(
 #version 400
 
 in vec4 sphere;
-
-in vec3 corners;
+in vec2 corners;
 
 out vec3 sphere_center;
 out float sphere_radius;
 out vec3 position;
 
 uniform mat4 proj;
+uniform vec3 up;
+uniform vec3 camera_position;
 
 void main() {
   sphere_center = sphere.xyz;
   sphere_radius = sphere.w;
-  position = sphere.w * corners + sphere.xyz;
+  vec3 e1 = normalize(cross(sphere_center - camera_position, up));
+  vec3 e2 = normalize(cross(e1, sphere_center - camera_position));
+  position = 1.05 * sphere.w * (corners.x * e1 + corners.y * e2) + sphere.xyz;
   gl_Position = proj * vec4(position, 1);
 }
 )vert");
 
 const std::string frag_shader(R"frag(
 #version 400
-
-//in fragData {
-//  vec4 color;
-//  vec3 position;
-//} inData;
 
 in vec3 sphere_center;
 in float sphere_radius;
@@ -111,14 +98,14 @@ Spheres::Spheres() : program({
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  glGenBuffers(1, &cube_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices, GL_STATIC_DRAW);
+  glGenBuffers(1, &instance_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, instance_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(instance_triangles), instance_triangles, GL_STATIC_DRAW);
 
-  glGenBuffers(1, &cube_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, cube_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
-  program.setAttribute("corners", 3, sizeof(glm::vec3), 0);
+  glGenBuffers(1, &instance_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, instance_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(instance_vertices), instance_vertices, GL_STATIC_DRAW);
+  program.setAttribute("corners", 2, sizeof(glm::vec2), 0);
 
   glGenBuffers(1, &sphere_vbo);
   glBindBuffer(GL_ARRAY_BUFFER, sphere_vbo);
@@ -144,10 +131,8 @@ void Spheres::draw(const Camera & camera) {
 
   auto proj = camera.matrix();
 
-  //auto v = camera.up();
-  //auto h = glm::normalize(glm::cross(v, camera.m_pos - camera.m_focus));
-  glUniformMatrix4fv(program.uniform("proj"), 1, GL_FALSE, glm::value_ptr(camera.matrix()));
-
+  program.setUniform("up", camera.up());
+  program.setUniform("proj", camera.matrix());
   program.setUniform("camera_position", camera.pos());
 
   glBindVertexArray(vao);
@@ -157,9 +142,11 @@ void Spheres::draw(const Camera & camera) {
     dirty = false;
   }
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_ebo);
-  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glDrawElementsInstanced(GL_TRIANGLES, 6*6, GL_UNSIGNED_INT, 0, data.size());
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, instance_ebo);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glDrawElementsInstanced(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, 0, data.size());
 
   program.unuse();
 
