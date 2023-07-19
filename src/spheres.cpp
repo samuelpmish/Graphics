@@ -22,7 +22,9 @@ const std::string vert_shader(R"vert(
 
 in vec4 sphere;
 in vec2 corners;
+in vec4 rgba;
 
+out vec4 sphere_color;
 out vec3 sphere_center;
 out float sphere_radius;
 out vec3 position;
@@ -32,6 +34,7 @@ uniform vec3 up;
 uniform vec3 camera_position;
 
 void main() {
+  sphere_color = rgba;
   sphere_center = sphere.xyz;
   sphere_radius = sphere.w;
   vec3 e1 = normalize(cross(sphere_center - camera_position, up));
@@ -48,6 +51,8 @@ in vec3 sphere_center;
 in float sphere_radius;
 in vec3 position;
 
+in vec4 sphere_color;
+
 out vec4 frag_color;
 
 uniform vec3 camera_position;
@@ -55,7 +60,7 @@ uniform mat4 proj;
 
 void main() {
 
-  frag_color = vec4(1,0,0,1);
+  frag_color = sphere_color;
 
   float R = sphere_radius;
 
@@ -83,15 +88,14 @@ void main() {
   float ndcDepth = clip.z / clip.w;
   gl_FragDepth = (((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0) + depth;
 
-  frag_color = vec4(1.0, 1.0, 1.0, 1.0);
-
 }
 )frag");
 
 Spheres::Spheres() : program({
     Shader::fromString(vert_shader, GL_VERTEX_SHADER),
     Shader::fromString(frag_shader, GL_FRAGMENT_SHADER)
-  }) {
+  }),
+  color{255, 255, 255, 255} {
 
   dirty = true;
 
@@ -112,6 +116,11 @@ Spheres::Spheres() : program({
   program.setAttribute("sphere", 4, sizeof(glm::vec4), 0);
   glVertexAttribDivisor(program.attribute("sphere"), 1);
 
+  glGenBuffers(1, &color_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
+  program.setAttribute("rgba", 4, sizeof(rgbcolor), 0, GL_TRUE, GL_UNSIGNED_BYTE);
+  glVertexAttribDivisor(program.attribute("rgba"), 1);
+
 }
 
 void Spheres::clear() {
@@ -122,6 +131,18 @@ void Spheres::clear() {
 void Spheres::append(const std::vector< Sphere > & more_spheres) {
   data.reserve(data.size() + more_spheres.size());
   data.insert(data.end(), more_spheres.begin(), more_spheres.end());  
+
+  colors.insert(colors.end(), more_spheres.size(), color);
+  dirty = true;
+}
+
+void Spheres::append(const std::vector< Sphere > & more_spheres,
+                     const std::vector< rgbcolor > & more_colors) {
+  data.reserve(data.size() + more_spheres.size());
+  data.insert(data.end(), more_spheres.begin(), more_spheres.end());  
+
+  colors.reserve(colors.size() + more_colors.size());
+  colors.insert(colors.end(), more_colors.begin(), more_colors.end());  
   dirty = true;
 }
 
@@ -139,6 +160,9 @@ void Spheres::draw(const Camera & camera) {
   if (dirty) {
     glBindBuffer(GL_ARRAY_BUFFER, sphere_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Sphere) * data.size(), &data[0], GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rgbcolor) * colors.size(), &colors[0], GL_STATIC_DRAW);
     dirty = false;
   }
 

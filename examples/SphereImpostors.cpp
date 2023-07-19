@@ -169,6 +169,7 @@ void Canvas::generate_spheres() {
   static std::uniform_real_distribution<float> distribution(0.0, 1.0);
 
   std::vector< Sphere > s(n);
+  std::vector< rgbcolor > c(n);
   float w = 10.0f;
 
   for (int i = 0; i < n; i++) {
@@ -176,10 +177,15 @@ void Canvas::generate_spheres() {
     s[i].center[1] = w * (2.0f * distribution(generator) - 1);
     s[i].center[2] = w * (2.0f * distribution(generator) - 1);
     s[i].radius = radius;
-  }
 
+    c[i].r = 255 * distribution(generator);
+    c[i].g = 255 * distribution(generator);
+    c[i].b = 255 * distribution(generator);
+    c[i].a = 255;
+  }
+  
   spheres.clear();
-  spheres.append(s);
+  spheres.append(s, c);
 
 }
 

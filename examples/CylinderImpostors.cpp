@@ -8,6 +8,7 @@
 #include "Camera.hpp"
 #include "Application.hpp"
 
+#include "spheres.hpp"
 #include "cylinders.hpp"
 
 #include <GLFW/glfw3.h>
@@ -50,6 +51,7 @@ class Canvas : public Application {
   float radius;
   float fov;
 
+  Spheres spheres;
   Cylinders cylinders;
 };
 
@@ -168,23 +170,48 @@ void Canvas::generate_cylinders() {
   static std::default_random_engine generator;
   static std::uniform_real_distribution<float> distribution(0.0, 1.0);
 
-  std::vector< Cylinder > s(n);
+  std::vector< Sphere > s1(2 * n);
+  std::vector< rgbcolor > c1(2 * n);
+
+  std::vector< Cylinder > s2(n);
+  std::vector< rgbcolor > c2(n);
   float w = 10.0f;
 
   for (int i = 0; i < n; i++) {
-    s[i].endpoints[0].center[0] = w * (2.0f * distribution(generator) - 1);
-    s[i].endpoints[0].center[1] = w * (2.0f * distribution(generator) - 1);
-    s[i].endpoints[0].center[2] = w * (2.0f * distribution(generator) - 1);
-    s[i].endpoints[0].radius = radius;
 
-    s[i].endpoints[1].center[0] = w * (2.0f * distribution(generator) - 1);
-    s[i].endpoints[1].center[1] = w * (2.0f * distribution(generator) - 1);
-    s[i].endpoints[1].center[2] = w * (2.0f * distribution(generator) - 1);
-    s[i].endpoints[1].radius = 3 * radius;
+    c1[2*i+0] = c1[2*i+1] = c2[i] = rgbcolor{
+      uint8_t(255 * distribution(generator)),
+      uint8_t(255 * distribution(generator)),
+      uint8_t(255 * distribution(generator)),
+      255
+    };
+
+    s1[2*i+0] = s2[i].endpoints[0] = Sphere{
+      {
+        w * (2.0f * distribution(generator) - 1),
+        w * (2.0f * distribution(generator) - 1),
+        w * (2.0f * distribution(generator) - 1),
+      },
+      radius
+    };
+
+    s1[2*i+1] = s2[i].endpoints[1] = Sphere{
+      {
+        w * (2.0f * distribution(generator) - 1),
+        w * (2.0f * distribution(generator) - 1),
+        w * (2.0f * distribution(generator) - 1),
+      },
+      radius
+    };
+
+
   }
 
+  spheres.clear();
+  spheres.append(s1, c1);
+
   cylinders.clear();
-  cylinders.append(s);
+  cylinders.append(s2, c2);
 
 }
 
@@ -228,6 +255,7 @@ void Canvas::loop() {
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
+  spheres.draw(camera);
   cylinders.draw(camera);
 
   // render your GUI

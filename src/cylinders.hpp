@@ -7,6 +7,8 @@
 
 #include "Shader.hpp"
 #include "Camera.hpp"
+#include "RGBColor.hpp"
+
 #include "spheres.hpp"
 
 struct Cylinder {
@@ -20,16 +22,22 @@ struct Cylinders {
 
   void clear();
   void append(const std::vector< Cylinder > & more_cylinders);
+  void append(const std::vector< Cylinder > & more_spheres, const std::vector < rgbcolor > & more_colors);
+
+  void set_color(rgbcolor c);
 
  private:
   bool dirty;
   GLuint vao;
-  GLuint cube_vbo; 
-  GLuint cube_ebo;
+  GLuint color_vbo;
+  GLuint instance_vbo; 
   GLuint cylinder_vbo;
 
   ShaderProgram program;
 
+  rgbcolor color;
+
   std::vector< Cylinder > data;
+  std::vector< rgbcolor > colors;
 
 };

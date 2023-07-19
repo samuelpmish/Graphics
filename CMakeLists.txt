@@ -34,3 +34,8 @@ endif()
 if (GRAPHICS_BUILD_TESTS)
   add_subdirectory(tests)
 endif()
+
+if (GRAPHICS_ENABLE_ASAN)
+  add_link_options(-fsanitize=address)
+  add_compile_options(-fsanitize=address)
+endif()
