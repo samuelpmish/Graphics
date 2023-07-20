@@ -302,15 +302,14 @@ void Molecules::loop() {
   static int which = 0;
 
   if (ImGui::RadioButton("citric acid", &which, 0)) {
-    m = Molecule::import_from_json("/Users/sam/code/Graphics/data/citric_acid.json"); 
+    m = Molecule::import_from_json(DATA_DIR"citric_acid.json"); 
   }
   if (ImGui::RadioButton("guanine", &which, 1)) {
-    m = Molecule::import_from_json("/Users/sam/code/Graphics/data/guanine.json"); 
+    m = Molecule::import_from_json(DATA_DIR"guanine.json"); 
   }
   if (ImGui::RadioButton("CUVNAK", &which, 2)) {
-    m = Molecule::import_from_json("/Users/sam/code/Graphics/data/CUVNAK.json"); 
+    m = Molecule::import_from_json(DATA_DIR"CUVNAK.json"); 
   }
-
 
   ImGui::End();
 
