@@ -247,7 +247,7 @@ void Molecules::update_camera_position() {
 
 Molecules::Molecules() : Application(), keys_down{} {
 
-  m = Molecule::import_from_json("/Users/sam/code/Graphics/data/citric_acid.json"); 
+  m = Molecule::import_from_json(DATA_DIR"citric_acid.json"); 
 
   glCheckError(__FILE__, __LINE__);
 
