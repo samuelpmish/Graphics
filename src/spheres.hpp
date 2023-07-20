@@ -24,6 +24,7 @@ struct Spheres {
   void append(const std::vector< Sphere > & more_spheres, const std::vector < rgbcolor > & more_colors);
 
   void set_color(rgbcolor c);
+  void set_light(glm::vec3 direction, float intensity);
 
  private:
   bool dirty;
@@ -39,5 +40,7 @@ struct Spheres {
 
   std::vector< Sphere > data;
   std::vector< rgbcolor > colors;
+
+  glm::vec4 light;
 
 };

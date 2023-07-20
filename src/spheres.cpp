@@ -55,6 +55,7 @@ in vec4 sphere_color;
 
 out vec4 frag_color;
 
+uniform vec4 light;
 uniform vec3 camera_position;
 uniform mat4 proj;
 
@@ -84,6 +85,13 @@ void main() {
 
   vec3 p = camera_position + D * t;
 
+  if (t > 0 && light.w != 0) {
+    vec3 normal = normalize(p - sphere_center);
+    float ambient = 1.0 - light.w;
+    float diffuse = clamp(dot(normal,light.xyz), 0.0, 1.0) * light.w;
+    frag_color *= ambient + diffuse;
+  }
+
   vec4 clip = proj * vec4(p, 1.0);
   float ndcDepth = clip.z / clip.w;
   gl_FragDepth = (((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0) + depth;
@@ -95,7 +103,8 @@ Spheres::Spheres() : program({
     Shader::fromString(vert_shader, GL_VERTEX_SHADER),
     Shader::fromString(frag_shader, GL_FRAGMENT_SHADER)
   }),
-  color{255, 255, 255, 255} {
+  color{255, 255, 255, 255},
+  light(0.721995, 0.618853, 0.309426, 0.0) {
 
   dirty = true;
 
@@ -146,12 +155,21 @@ void Spheres::append(const std::vector< Sphere > & more_spheres,
   dirty = true;
 }
 
+void Spheres::set_light(glm::vec3 direction, float intensity) {
+  auto unit_direction = normalize(direction);
+  light[0] = unit_direction[0];
+  light[1] = unit_direction[1];
+  light[2] = unit_direction[2];
+  light[3] = glm::clamp(intensity, 0.0f, 1.0f);
+}
+
 void Spheres::draw(const Camera & camera) {
 
   program.use();
 
   auto proj = camera.matrix();
 
+  program.setUniform("light", light);
   program.setUniform("up", camera.up());
   program.setUniform("proj", camera.matrix());
   program.setUniform("camera_position", camera.pos());

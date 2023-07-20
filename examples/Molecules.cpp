@@ -82,7 +82,7 @@ struct Molecule {
       Sphere mid = {(atoms[bond[0]].center + atoms[bond[1]].center) * 0.5f, bond_radius};
       Sphere end = atoms[bond[1]];
 
-      start.radius = mid.radius = end.radius = bond_radius * ((bond[2] == 2) ? 2.0 : 1.0);
+      start.radius = mid.radius = end.radius = bond_radius * ((bond[2] == 2) ? 1.7 : 1.0);
 
       bonds.push_back(Cylinder{start, mid});
       bond_colors.push_back(atom_colors[bond[0]]);
@@ -292,6 +292,13 @@ void Molecules::loop() {
 
   if (ImGui::DragFloat("fov", &fov, 0.01f, 0.05f, 1.5f)) {
     camera.perspective(fov, getWindowRatio(), 0.01f, 100.0f);
+  }
+
+  static float light_intensity = 0.0f;
+  if (ImGui::DragFloat("light intensity", &light_intensity, 0.01f, 0.0f, 1.0f)) {
+    glm::vec3 direction(0.721995, 0.618853, 0.309426);
+    m.spheres.set_light(direction, light_intensity);
+    m.cylinders.set_light(direction, light_intensity);
   }
 
   static int which = 0;
