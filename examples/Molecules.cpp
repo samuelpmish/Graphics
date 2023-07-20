@@ -130,8 +130,6 @@ class Molecules : public Application {
   bool mmb_down = false;
   bool rmb_down = false;
 
-  int32_t n;
-  float radius;
   float fov;
 
   Molecule m;

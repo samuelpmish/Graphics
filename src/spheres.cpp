@@ -167,8 +167,6 @@ void Spheres::draw(const Camera & camera) {
 
   program.use();
 
-  auto proj = camera.matrix();
-
   program.setUniform("light", light);
   program.setUniform("up", camera.up());
   program.setUniform("proj", camera.matrix());
