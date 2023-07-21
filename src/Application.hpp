@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include "Camera.hpp"
+
 struct GLFWwindow;
 
 /// Application class:
@@ -24,7 +26,13 @@ struct GLFWwindow;
 /// * let the user define the "loop" function.
 class Application {
  public:
-  Application();
+  Application(std::string title = "Application");
+
+  virtual void update_camera_position();
+  virtual void mouse_motion_callback(GLFWwindow* window, double xpos, double ypos);
+  virtual void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+  virtual void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+  virtual void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
   static Application& getInstance();
 
@@ -67,10 +75,17 @@ class Application {
   bool dimensionChanged;
   void detectWindowDimensionChange();
 
- protected:
-  Application(const Application&){};
+  Camera camera;
 
-  std::string title;
+  float camera_speed;
+  bool keys_down[256];
+  double mouse_x, mouse_y;
+
+  bool lmb_down = false;
+  bool mmb_down = false;
+  bool rmb_down = false;
+
+  Application(const Application&) {};
 
   virtual void loop();
 };
