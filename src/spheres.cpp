@@ -9,7 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_operation.hpp>
 
-static float instance_vertices[24] = {
+static float instance_vertices[8] = {
 	-1.0f, -1.0f,
 	 1.0f, -1.0f,
 	 1.0f, +1.0f,
