@@ -20,6 +20,7 @@ struct Spheres {
   void draw(const Camera & camera);
 
   void clear();
+  void append(const Sphere & sphere);
   void append(const std::vector< Sphere > & more_spheres);
   void append(const std::vector< Sphere > & more_spheres, const std::vector < rgbcolor > & more_colors);
 

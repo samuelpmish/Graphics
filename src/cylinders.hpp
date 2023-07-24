@@ -21,6 +21,7 @@ struct Cylinders {
   void draw(const Camera & camera);
 
   void clear();
+  void append(const Cylinder & cylinder);
   void append(const std::vector< Cylinder > & more_cylinders);
   void append(const std::vector< Cylinder > & more_spheres, const std::vector < rgbcolor > & more_colors);
 

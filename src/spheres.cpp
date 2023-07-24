@@ -1,6 +1,7 @@
 #include "spheres.hpp"
 
 #include <string>
+#include <iostream>
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -134,6 +135,13 @@ Spheres::Spheres() : program({
 
 void Spheres::clear() {
   data.clear();
+  colors.clear();
+  dirty = true;
+}
+
+void Spheres::append(const Sphere & sphere) {
+  data.push_back(sphere);
+  colors.push_back(color);
   dirty = true;
 }
 
@@ -163,6 +171,10 @@ void Spheres::set_light(glm::vec3 direction, float intensity) {
   light[3] = glm::clamp(intensity, 0.0f, 1.0f);
 }
 
+void Spheres::set_color(rgbcolor c) {
+  color = c;
+}
+
 void Spheres::draw(const Camera & camera) {
 
   program.use();
@@ -174,6 +186,10 @@ void Spheres::draw(const Camera & camera) {
 
   glBindVertexArray(vao);
   if (dirty) {
+    if (colors.size() != data.size()) {
+      std::cout << "error: `Sphere` buffer sizes are incompatible" << std::endl;
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, sphere_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Sphere) * data.size(), &data[0], GL_STATIC_DRAW);
 

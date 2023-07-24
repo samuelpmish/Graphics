@@ -108,6 +108,13 @@ Cylinders::Cylinders() : program({
 
 void Cylinders::clear() {
   data.clear();
+  colors.clear();
+  dirty = true;
+}
+
+void Cylinders::append(const Cylinder & cylinder) {
+  data.push_back(cylinder);
+  colors.push_back(color);
   dirty = true;
 }
 
@@ -137,6 +144,10 @@ void Cylinders::set_light(glm::vec3 direction, float intensity) {
   light[3] = glm::clamp(intensity, 0.0f, 1.0f);
 }
 
+void Cylinders::set_color(rgbcolor c) {
+  color = c;
+}
+
 void Cylinders::draw(const Camera & camera) {
 
   program.use();
@@ -147,6 +158,10 @@ void Cylinders::draw(const Camera & camera) {
 
   glBindVertexArray(vao);
   if (dirty) {
+    if (colors.size() != data.size()) {
+      std::cout << "error: `Cylinder` buffer sizes are incompatible" << std::endl;
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, cylinder_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Cylinder) * data.size(), &data[0], GL_STATIC_DRAW);
 
@@ -156,7 +171,6 @@ void Cylinders::draw(const Camera & camera) {
     dirty = false;
   }
 
-  //glBindBuffer(GL_ARRAY_BUFFER, instance_vbo);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glDisable(GL_CULL_FACE);
   glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, cylinder_vertices.size(), data.size());

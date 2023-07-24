@@ -115,6 +115,9 @@ class Molecules : public Application {
     camera_speed = 0.02;
     camera.lookAt(glm::vec3(4, 4, 4), glm::vec3(0, 0, 0));
     camera.perspective(fov, getWindowRatio(), 0.01f, 100.0f);
+
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 
  protected:
