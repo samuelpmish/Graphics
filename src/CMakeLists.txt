@@ -79,11 +79,6 @@ if (BUILD_EXAMPLES)
 
 file(GLOB cpp_tests ${PROJECT_SOURCE_DIR}/src/opengl/examples/*.cpp)
 
-if (NOT TIFF_FOUND)
-  message("not using libtiff, skipping ct_scan example")
-  list(REMOVE_ITEM cpp_tests ${PROJECT_SOURCE_DIR}/src/opengl/examples/ct_scan.cpp)
-endif()
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}) 
 
 foreach(filename ${cpp_tests})		

@@ -27,6 +27,8 @@ struct Spheres {
   void set_color(rgbcolor c);
   void set_light(glm::vec3 direction, float intensity);
 
+  auto size() { return data.size(); }
+
  private:
   bool dirty;
   GLuint vao;

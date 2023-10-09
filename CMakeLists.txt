@@ -21,11 +21,14 @@ add_library(graphics STATIC
   src/spheres.cpp
   src/cylinders.hpp
   src/cylinders.cpp
+  src/triangles.hpp
+  src/triangles.cpp
 )
 
 target_include_directories(graphics PUBLIC ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(graphics PUBLIC ${PROJECT_SOURCE_DIR}/src/imgui)
 target_link_libraries(graphics PUBLIC glfw glm libglew_static imgui)
+target_compile_definitions(graphics PUBLIC "-DGRAPHICS_DATA_DIR=\"${PROJECT_SOURCE_DIR}/data/\"")
 
 if (GRAPHICS_BUILD_EXAMPLES)
   add_subdirectory(examples)

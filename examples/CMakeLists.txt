@@ -6,6 +6,5 @@ foreach(filename ${cpp_examples})
 
   add_executable(${testname} ${filename})
   target_link_libraries(${testname} PUBLIC graphics)
-  target_compile_definitions(${testname} PUBLIC "-DDATA_DIR=\"${PROJECT_SOURCE_DIR}/data/\"")
 
 endforeach(filename ${cpp_examples})
