@@ -14,9 +14,7 @@
 namespace Graphics {
 
 static const std::string vert_shader(R"vert(
-#version 150
-
-//uniform vec4 light;
+#version 400
 
 in vec3 vert;
 in vec4 rgba;
@@ -33,7 +31,7 @@ void main() {
 )vert");
 
 static const std::string frag_shader(R"frag(
-#version 150
+#version 400
 
 in fragData{
   vec4 color;
@@ -81,6 +79,25 @@ static constexpr PatchType patch_types[4] = {
   PatchType::TRI6, PatchType::QUAD4, PatchType::QUAD8, PatchType::QUAD9 
 };
 
+Patches::RenderGroup::RenderGroup(const std::vector<Shader> & shaderList) : program(shaderList) {
+
+  dirty = false;
+
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+
+  glGenBuffers(1, &position_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, position_vbo);
+  program.setAttribute("vert", 3, 12, 0);
+  glCheckError(__FILE__, __LINE__);
+
+  glGenBuffers(1, &color_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
+  program.setAttribute("rgba", 4, 4, 0, GL_TRUE, GL_UNSIGNED_BYTE);
+  glCheckError(__FILE__, __LINE__);
+
+}
+
 Patches::Patches() : groups{
     {std::vector<Shader>{
       Shader::fromString(vert_shader, GL_VERTEX_SHADER),
@@ -109,34 +126,12 @@ Patches::Patches() : groups{
   },
   color{255, 255, 255, 255},
   light(0.721995, 0.618853, 0.309426, 0.0) {
-
-  for (auto type : patch_types) {
-
-    auto & g = groups[type];
-
-    g.dirty = true;
-
-    glGenVertexArrays(1, &g.vao);
-    glBindVertexArray(g.vao);
-
-    glGenBuffers(1, &g.position_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, g.position_vbo);
-    g.program.setAttribute("vert", 3, 12, 0);
-
-    glGenBuffers(1, &g.color_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, g.color_vbo);
-    g.program.setAttribute("rgba", 4, 4, 0, GL_TRUE, GL_UNSIGNED_BYTE);
-
-    glCheckError(__FILE__, __LINE__);
-
-  }
-
 }
 
 void Patches::append(const Quad4 & quad) {
   auto & g = groups[PatchType::QUAD4];
   for (auto x : quad) {
-    g.positions.push_back(quad[0]);
+    g.positions.push_back(x);
     g.colors.push_back(color);
   }
   g.dirty = true;
@@ -168,6 +163,8 @@ void Patches::draw(const Camera & camera) {
 
     auto & g = groups[type];
 
+    if (g.positions.size() == 0) continue;
+
     g.program.use();
 
     g.program.setUniform("proj", camera.matrix());
@@ -192,6 +189,8 @@ void Patches::draw(const Camera & camera) {
 
     glPatchParameteri(GL_PATCH_VERTICES, vertices_per_patch(type));
     glDrawArrays(GL_PATCHES, 0, g.positions.size());
+    //glDrawArrays(GL_TRIANGLE_STRIP, 0, g.positions.size());
+    //glCheckError(__FILE__, __LINE__);
 
     g.program.unuse();
 

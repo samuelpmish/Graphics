@@ -44,10 +44,9 @@ struct Patches {
 
  private:
 
-  rgbcolor color;
-  glm::vec4 light;
-
   struct RenderGroup {
+    RenderGroup(const std::vector<Shader> & shaderList);
+
     ShaderProgram program;
 
     bool dirty;
@@ -59,6 +58,9 @@ struct Patches {
     std::vector< rgbcolor > colors;
     std::vector< glm::vec3 > positions;
   };
+
+  rgbcolor color;
+  glm::vec4 light;
 
   RenderGroup groups[4];
 

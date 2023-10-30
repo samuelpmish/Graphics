@@ -36,8 +36,8 @@ class TriangleDemo : public Application {
     camera.lookAt(glm::vec3(4, 4, 4), glm::vec3(0, 0, 0));
     camera.perspective(fov, getWindowRatio(), 0.01f, 100.0f);
 
-    //tris.set_color(yellow);
-    //tris.append(Quad4{{{0, 0, 0}, {1, 0, 0}, {1, 1, 0.4}, {0, 1, 0}}});
+    tris.set_color(yellow);
+    tris.append(Tri3{{{0, 0, 0}, {1, 0, 0}, {1, 1, 0.4}}});
     //tris.set_color(purple);
     //tris.append(Tri6{{{1, 0, -0.3}, {1, 1, 0.3}, {0, 1, 0}, {1.0, 0.5, 0}, {0.5, 1, 0}, {0.5, 0.5, 0.0}}});
   }

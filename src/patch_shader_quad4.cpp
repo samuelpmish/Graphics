@@ -62,8 +62,8 @@ void main() {
   float weights[4];
   weights[0] = (1.0 - xi) * (1.0 - eta);
   weights[1] =        xi  * (1.0 - eta);
-  weights[2] = (1.0 - xi) *        eta ; 
-  weights[3] =        xi  *        eta ;
+  weights[2] =        xi  *        eta ;
+  weights[3] = (1.0 - xi) *        eta ; 
 
   vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
   vec3 position = vec3(0.0, 0.0, 0.0);
