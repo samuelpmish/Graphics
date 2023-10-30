@@ -67,8 +67,8 @@ Application::Application(std::string title) :
   }
 
   // setting the opengl version
-  int major = 3;
-  int minor = 2;
+  int major = 4;
+  int minor = 0;
   glfwWindowHint(GLFW_SAMPLES, 4);
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);

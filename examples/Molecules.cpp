@@ -26,14 +26,16 @@
 #include <fstream>
 #include <unordered_map>
 
+using namespace colors;
+
 static const std::unordered_map< uint32_t, rgbcolor > color_from_atomic_number = {
-  { 1, rgbcolor{230, 230, 230, 255}}, // hydrogen is white
-  { 6, rgbcolor{170, 170, 170, 255}}, // carbon is light gray
-  { 7, rgbcolor{ 30,  30, 200, 255}}, // nitrogen is blue
-  { 8, rgbcolor{230,  30,  30, 255}}, // oxygen is red
-  {15, rgbcolor{240, 140,   0, 255}}, // phosphorus is orange
-  {16, rgbcolor{240, 220,   0, 255}}, // sulfur is yellow
-  {30, rgbcolor{170,  20, 170, 255}}, // zinc is purple
+  { 1, white},      // hydrogen
+  { 6, light_gray}, // carbon
+  { 7, blue},       // nitrogen
+  { 8, red},        // oxygen
+  {15, orange},     // phosphorus
+  {16, yellow},     // sulfur
+  {30, purple}      // zinc
 };
 
 struct Molecule {
@@ -109,7 +111,7 @@ struct Molecule {
 class Molecules : public Application {
  public:
   Molecules() : Application("Molecules") {
-    m = Molecule::import_from_json(DATA_DIR"citric_acid.json"); 
+    m = Molecule::import_from_json(GRAPHICS_DATA_DIR"citric_acid.json"); 
 
     fov = 1.0;
     camera_speed = 0.02;
@@ -157,13 +159,13 @@ class Molecules : public Application {
     static int which = 0;
 
     if (ImGui::RadioButton("citric acid", &which, 0)) {
-      m = Molecule::import_from_json(DATA_DIR"citric_acid.json"); 
+      m = Molecule::import_from_json(GRAPHICS_DATA_DIR"citric_acid.json"); 
     }
     if (ImGui::RadioButton("guanine", &which, 1)) {
-      m = Molecule::import_from_json(DATA_DIR"guanine.json"); 
+      m = Molecule::import_from_json(GRAPHICS_DATA_DIR"guanine.json"); 
     }
     if (ImGui::RadioButton("CUVNAK", &which, 2)) {
-      m = Molecule::import_from_json(DATA_DIR"CUVNAK.json"); 
+      m = Molecule::import_from_json(GRAPHICS_DATA_DIR"CUVNAK.json"); 
     }
 
     ImGui::End();

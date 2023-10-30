@@ -23,6 +23,12 @@ add_library(graphics STATIC
   src/cylinders.cpp
   src/triangles.hpp
   src/triangles.cpp
+  src/patches.hpp
+  src/patches.cpp
+  src/patch_shader_tri6.cpp
+  src/patch_shader_quad4.cpp
+  src/patch_shader_quad8.cpp
+  src/patch_shader_quad9.cpp
 )
 
 target_include_directories(graphics PUBLIC ${PROJECT_SOURCE_DIR}/src)
