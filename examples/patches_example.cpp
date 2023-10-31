@@ -36,9 +36,31 @@ class PatchDemo : public Application {
     camera.lookAt(glm::vec3(4, 4, 4), glm::vec3(0, 0, 0));
     camera.perspective(fov, getWindowRatio(), 0.01f, 100.0f);
 
-    patches.set_subdivision(PatchType::QUAD4, 4);
+    subdivisions = 4;
+    remesh();
+  }
+
+  void remesh() {
+    patches.clear();
+    patches.set_subdivision(PatchType::QUAD4, subdivisions);
     patches.set_color(yellow);
-    patches.append(Quad4{{{0, 0, 0}, {1, 0, 0}, {1, 1, 0.4}, {0, 1, 0}}});
+    patches.append(Quad4{{{0, 0, 0.7}, {1, 0, 0}, {1, 1, 0.7}, {0, 1, 0}}});
+
+    patches.set_subdivision(PatchType::TRI6, subdivisions);
+    patches.set_color(red);
+    patches.append(Tri6{{{2, 0, 0.5}, {3, 0, 0}, {2, 1, 0}, 
+                         {2.5, 0.0, 0.0}, {2.5, 0.5, 0}, {2.0, 0.5, 0.0}}});
+
+    patches.set_subdivision(PatchType::QUAD8, subdivisions);
+    patches.set_color(green);
+    patches.append(Quad8{{{2.0, 2.0, 0.5}, {3.0, 2.0, 0.5}, {3.0, 3.0, 0.5}, {2.0, 3.0, 0.5},
+                          {2.5, 2.0, 0.0}, {3.0, 2.5, 1.0}, {2.5, 3.0, 0.0}, {2.0, 2.5, 1.0}}});
+
+    patches.set_subdivision(PatchType::QUAD9, subdivisions);
+    patches.set_color(purple);
+    patches.append(Quad9{{{0.0, 2.0, 0.0}, {1.0, 2.0, 0.0}, {1.0, 3.0, 0.0}, {0.0, 3.0, 0.0},
+                          {0.5, 2.0, 0.0}, {1.0, 2.5, 0.0}, {0.5, 3.0, 0.0}, {0.0, 2.5, 0.0}, {0.5, 2.5, 0.5}}});
+
   }
 
  protected:
@@ -68,6 +90,10 @@ class PatchDemo : public Application {
       camera.perspective(fov, getWindowRatio(), 0.01f, 100.0f);
     }
 
+    if (ImGui::DragInt("subdivision", &subdivisions, 0.05f, 1, 16)) {
+      remesh();
+    }
+
     static float light_intensity = 0.0f;
     if (ImGui::DragFloat("light intensity", &light_intensity, 0.01f, 0.0f, 1.0f)) {
       glm::vec3 direction(0.721995, 0.618853, 0.309426);
@@ -87,6 +113,7 @@ class PatchDemo : public Application {
  private:
   float fov;
   Patches patches;
+  int subdivisions;
 };
 
 int main(int argc, const char* argv[]) {

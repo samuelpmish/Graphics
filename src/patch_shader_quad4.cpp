@@ -18,7 +18,7 @@ out tessData {
   vec4 color;
 } outData[];
 
-const float subdivision =  15.0;
+uniform float subdivision;
 
 void main() {
 

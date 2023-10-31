@@ -40,8 +40,8 @@ in fragData{
 out vec4 frag_color;
 
 void main() {
-  //frag_color = inData.color;
-  frag_color = vec4(1.0, 1.0, 0.0, 1.0);
+  frag_color = inData.color;
+  //frag_color = vec4(1.0, 1.0, 0.0, 1.0);
 }
 )frag");
 
@@ -81,12 +81,17 @@ static constexpr PatchType patch_types[4] = {
 
 Patches::RenderGroup::RenderGroup(const std::vector<Shader> & shaderList) : program(shaderList) {
 
+  std::cout << "test" << std::endl;
   dirty = false;
+  subdivision = 3;
 
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
+  glCheckError(__FILE__, __LINE__);
 
   glGenBuffers(1, &position_vbo);
+  glCheckError(__FILE__, __LINE__);
+
   glBindBuffer(GL_ARRAY_BUFFER, position_vbo);
   program.setAttribute("vert", 3, 12, 0);
   glCheckError(__FILE__, __LINE__);
@@ -101,8 +106,8 @@ Patches::RenderGroup::RenderGroup(const std::vector<Shader> & shaderList) : prog
 Patches::Patches() : groups{
     {std::vector<Shader>{
       Shader::fromString(vert_shader, GL_VERTEX_SHADER),
-      Shader::fromString(quad4_tcs_shader, GL_TESS_CONTROL_SHADER),
-      Shader::fromString(quad4_tes_shader, GL_TESS_EVALUATION_SHADER),
+      Shader::fromString(tri6_tcs_shader, GL_TESS_CONTROL_SHADER),
+      Shader::fromString(tri6_tes_shader, GL_TESS_EVALUATION_SHADER),
       Shader::fromString(frag_shader, GL_FRAGMENT_SHADER)
     }},
     {std::vector<Shader>{
@@ -113,14 +118,14 @@ Patches::Patches() : groups{
     }},
     {std::vector<Shader>{
       Shader::fromString(vert_shader, GL_VERTEX_SHADER),
-      Shader::fromString(quad4_tcs_shader, GL_TESS_CONTROL_SHADER),
-      Shader::fromString(quad4_tes_shader, GL_TESS_EVALUATION_SHADER),
+      Shader::fromString(quad8_tcs_shader, GL_TESS_CONTROL_SHADER),
+      Shader::fromString(quad8_tes_shader, GL_TESS_EVALUATION_SHADER),
       Shader::fromString(frag_shader, GL_FRAGMENT_SHADER)
     }},
     {std::vector<Shader>{
       Shader::fromString(vert_shader, GL_VERTEX_SHADER),
-      Shader::fromString(quad4_tcs_shader, GL_TESS_CONTROL_SHADER),
-      Shader::fromString(quad4_tes_shader, GL_TESS_EVALUATION_SHADER),
+      Shader::fromString(quad9_tcs_shader, GL_TESS_CONTROL_SHADER),
+      Shader::fromString(quad9_tes_shader, GL_TESS_EVALUATION_SHADER),
       Shader::fromString(frag_shader, GL_FRAGMENT_SHADER)
     }}
   },
@@ -130,6 +135,33 @@ Patches::Patches() : groups{
 
 void Patches::append(const Quad4 & quad) {
   auto & g = groups[PatchType::QUAD4];
+  for (auto x : quad) {
+    g.positions.push_back(x);
+    g.colors.push_back(color);
+  }
+  g.dirty = true;
+}
+
+void Patches::append(const Tri6 & tri) {
+  auto & g = groups[PatchType::TRI6];
+  for (auto x : tri) {
+    g.positions.push_back(x);
+    g.colors.push_back(color);
+  }
+  g.dirty = true;
+}
+
+void Patches::append(const Quad8 & quad) {
+  auto & g = groups[PatchType::QUAD8];
+  for (auto x : quad) {
+    g.positions.push_back(x);
+    g.colors.push_back(color);
+  }
+  g.dirty = true;
+}
+
+void Patches::append(const Quad9 & quad) {
+  auto & g = groups[PatchType::QUAD9];
   for (auto x : quad) {
     g.positions.push_back(x);
     g.colors.push_back(color);
@@ -167,6 +199,9 @@ void Patches::draw(const Camera & camera) {
 
     g.program.use();
 
+    g.program.setUniform("subdivision", g.subdivision);
+    glCheckError(__FILE__, __LINE__);
+
     g.program.setUniform("proj", camera.matrix());
     glCheckError(__FILE__, __LINE__);
 
@@ -183,14 +218,15 @@ void Patches::draw(const Camera & camera) {
       g.dirty = false;
     }
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
     glDisable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
 
     glPatchParameteri(GL_PATCH_VERTICES, vertices_per_patch(type));
     glDrawArrays(GL_PATCHES, 0, g.positions.size());
-    //glDrawArrays(GL_TRIANGLE_STRIP, 0, g.positions.size());
-    //glCheckError(__FILE__, __LINE__);
 
     g.program.unuse();
 

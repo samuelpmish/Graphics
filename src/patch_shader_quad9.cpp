@@ -10,28 +10,28 @@ layout(vertices = 9) out;
 
 in vertexData {
   vec3 position;
-  float value;
+  vec4 color;
 } inData[];
 
 out tessData {
   vec3 position;
-  float value;
+  vec4 color;
 } outData[];
 
-const float quality =  15.0;
+uniform float subdivision;
 
 void main() {
 
-  gl_TessLevelOuter[0] = quality;
-  gl_TessLevelOuter[1] = quality;
-  gl_TessLevelOuter[2] = quality;
-  gl_TessLevelOuter[3] = quality;
+  gl_TessLevelOuter[0] = subdivision;
+  gl_TessLevelOuter[1] = subdivision;
+  gl_TessLevelOuter[2] = subdivision;
+  gl_TessLevelOuter[3] = subdivision;
 
-  gl_TessLevelInner[0] = quality;
-  gl_TessLevelInner[1] = quality;
+  gl_TessLevelInner[0] = subdivision;
+  gl_TessLevelInner[1] = subdivision;
 
   outData[gl_InvocationID].position = inData[gl_InvocationID].position;
-  outData[gl_InvocationID].value    = inData[gl_InvocationID].value;
+  outData[gl_InvocationID].color    = inData[gl_InvocationID].color;
 
 }
 )tcs");
@@ -44,11 +44,11 @@ layout(quads, equal_spacing) in;
 
 in tessData{
   vec3 position;
-  float value;
+  vec4 color;
 } inData[];
 
 out fragData{
-  float value;
+  vec4 color;
 } outData;
 
 uniform mat4 proj;
@@ -58,23 +58,38 @@ void main() {
   float xi = gl_TessCoord.x;
   float eta = gl_TessCoord.y;
 
-  // evaluate the quad4 shape functions
-  float weights[4];
-  weights[0] = (1.0 - xi) * (1.0 - eta);
-  weights[1] =        xi  * (1.0 - eta);
-  weights[2] = (1.0 - xi) *        eta ; 
-  weights[3] =        xi  *        eta ;
+  float w_xi[3];
+  w_xi[0] = (-1 + xi)*(-1 + 2*xi);
+  w_xi[1] = -4*(-1 + xi)*xi;
+  w_xi[2] = xi*(-1 + 2*xi);
 
-  float value = 0.0;
-  vec3 position = vec3(0.0, 0.0, 0.0);
-  for (int i = 0; i < 4; i++) {
-    position += weights[i] * inData[i].position;
-    value +=    weights[i] * inData[i].value;
-  }
+  float w_eta[3];
+  w_eta[0] = (-1 + eta)*(-1 + 2*eta);
+  w_eta[1] = -4*(-1 + eta)*eta;
+  w_eta[2] = eta*(-1 + 2*eta);
+
+  vec3 position = inData[0].position * w_xi[0] * w_eta[0] + 
+                  inData[1].position * w_xi[2] * w_eta[0] + 
+                  inData[2].position * w_xi[2] * w_eta[2] + 
+                  inData[3].position * w_xi[0] * w_eta[2] + 
+                  inData[4].position * w_xi[1] * w_eta[0] + 
+                  inData[5].position * w_xi[2] * w_eta[1] + 
+                  inData[6].position * w_xi[1] * w_eta[2] + 
+                  inData[7].position * w_xi[0] * w_eta[1] + 
+                  inData[8].position * w_xi[1] * w_eta[1];
+
+  vec4 color = inData[0].color * w_xi[0] * w_eta[0] + 
+               inData[1].color * w_xi[2] * w_eta[0] + 
+               inData[2].color * w_xi[2] * w_eta[2] + 
+               inData[3].color * w_xi[0] * w_eta[2] + 
+               inData[4].color * w_xi[1] * w_eta[0] + 
+               inData[5].color * w_xi[2] * w_eta[1] + 
+               inData[6].color * w_xi[1] * w_eta[2] + 
+               inData[7].color * w_xi[0] * w_eta[1] + 
+               inData[8].color * w_xi[1] * w_eta[1];
 
   gl_Position = proj * vec4(position, 1.0);
-
-  outData.value = value;
+  outData.color = color;
 
 }
 )tes");

@@ -40,7 +40,7 @@ struct Patches {
 
   auto size(PatchType t) { return groups[t].positions.size(); }
   
-  void set_subdivision(PatchType p, int s) { groups[p].subdivision = std::max(1, std::min(s, 8)); }
+  void set_subdivision(PatchType p, int s) { groups[p].subdivision = std::max(1, std::min(s, 16)); }
 
  private:
 
@@ -54,7 +54,7 @@ struct Patches {
     GLuint color_vbo;
     GLuint position_vbo;
 
-    int subdivision;
+    float subdivision;
     std::vector< rgbcolor > colors;
     std::vector< glm::vec3 > positions;
   };
