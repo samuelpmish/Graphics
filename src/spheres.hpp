@@ -7,7 +7,7 @@
 
 #include "Shader.hpp"
 #include "Camera.hpp"
-#include "RGBColor.hpp"
+#include "rgbcolor.hpp"
 
 struct Sphere {
   glm::vec3 center;

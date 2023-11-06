@@ -50,6 +50,11 @@ Application& Application::getInstance() {
     throw std::runtime_error("There is no current Application");
 }
 
+void ErrorCallback(int, const char* err_str)
+{
+    std::cout << "GLFW Error: " << err_str << std::endl;
+}
+
 Application::Application(std::string title) : 
     state(stateReady), 
     width(1200), 
@@ -59,6 +64,8 @@ Application::Application(std::string title) :
     mouse_y{} {
   currentApplication = this;
 
+  glfwSetErrorCallback(ErrorCallback);
+
   cout << "[Info] GLFW initialisation" << endl;
 
   // initialize the GLFW library
@@ -67,8 +74,8 @@ Application::Application(std::string title) :
   }
 
   // setting the opengl version
-  int major = 3;
-  int minor = 2;
+  int major = 4;
+  int minor = 1;
   glfwWindowHint(GLFW_SAMPLES, 4);
   glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);

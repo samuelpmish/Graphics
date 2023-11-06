@@ -7,20 +7,13 @@
 
 #include "Shader.hpp"
 #include "Camera.hpp"
-#include "RGBColor.hpp"
+#include "rgbcolor.hpp"
+#include "vertex.hpp"
 
 namespace Graphics {
 
-struct Triangle {
-  glm::vec3 vertices[3];
-};
+using Tri3 = std::array< glm::vec3, 3 >;
 
-struct TriangleWithColor {
-  struct {
-    glm::vec3 p;
-    rgbcolor color;
-  } vertices[3];
-};
 
 struct Triangles {
 
@@ -28,27 +21,29 @@ struct Triangles {
   void draw(const Camera & camera);
 
   void clear();
-  void append(const Triangle & triangle);
-  void append(const std::vector< Triangle > & more_triangles);
-  void append(const std::vector< Triangle > & more_triangles, const std::vector < rgbcolor > & more_colors);
+
+  void append(const Tri3 & triangle);
+  void append(const Tri3 & triangle, const std::array< rgbcolor, 3 > & colors);
 
   void set_color(rgbcolor c);
   void set_light(glm::vec3 direction, float intensity);
 
-  auto size() { return data.size(); }
+  auto size() { return vertices.size(); }
 
  private:
   bool dirty;
   GLuint vao;
   GLuint normal_vbo;
   GLuint triangle_vbo;
+  GLuint color_vbo;
 
   ShaderProgram program;
 
   rgbcolor color;
 
-  std::vector< Triangle > normals;
-  std::vector< TriangleWithColor > data;
+  std::vector< Tri3 > normals;
+  std::vector< Tri3 > vertices;
+  std::vector< color3 > colors;
 
   glm::vec4 light;
 

@@ -12,7 +12,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Shader.hpp"
-#include "RGBColor.hpp"
+#include "rgbcolor.hpp"
 
 struct Line {
   glm::vec3 vertices[2];
