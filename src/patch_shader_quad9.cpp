@@ -2,7 +2,7 @@
 
 namespace Graphics {
 
-extern const std::string quad9_tcs_shader(R"tcs(
+extern const std::string quad9_tcs_shader_color(R"tcs(
 #version 400
 #extension GL_ARB_tessellation_shader: enable
 
@@ -36,7 +36,7 @@ void main() {
 }
 )tcs");
 
-extern const std::string quad9_tes_shader(R"tes(
+extern const std::string quad9_tes_shader_color(R"tes(
 #version 400
 #extension GL_ARB_tessellation_shader: enable
 

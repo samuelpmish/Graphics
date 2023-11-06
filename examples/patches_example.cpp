@@ -33,7 +33,7 @@ class PatchDemo : public Application {
   PatchDemo() : Application("PatchDemo") {
     fov = 1.0;
     camera_speed = 0.02;
-    camera.lookAt(glm::vec3(4, 4, 4), glm::vec3(0, 0, 0));
+    camera.lookAt(glm::vec3(5, 5, 4), glm::vec3(1, 1, 0));
     camera.perspective(fov, getWindowRatio(), 0.01f, 100.0f);
 
     subdivisions = 4;
@@ -57,7 +57,7 @@ class PatchDemo : public Application {
                           {2.5, 2.0, 0.0}, {3.0, 2.5, 1.0}, {2.5, 3.0, 0.0}, {2.0, 2.5, 1.0}}});
 
     patches.set_subdivision(PatchType::QUAD9, subdivisions);
-    patches.set_color(purple);
+    patches.set_color(orange);
     patches.append(Quad9{{{0.0, 2.0, 0.0}, {1.0, 2.0, 0.0}, {1.0, 3.0, 0.0}, {0.0, 3.0, 0.0},
                           {0.5, 2.0, 0.0}, {1.0, 2.5, 0.0}, {0.5, 3.0, 0.0}, {0.0, 2.5, 0.0}, {0.5, 2.5, 0.5}}});
 

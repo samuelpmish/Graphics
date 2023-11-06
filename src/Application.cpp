@@ -50,6 +50,11 @@ Application& Application::getInstance() {
     throw std::runtime_error("There is no current Application");
 }
 
+void ErrorCallback(int, const char* err_str)
+{
+    std::cout << "GLFW Error: " << err_str << std::endl;
+}
+
 Application::Application(std::string title) : 
     state(stateReady), 
     width(1200), 
@@ -58,6 +63,8 @@ Application::Application(std::string title) :
     mouse_x{},
     mouse_y{} {
   currentApplication = this;
+
+  glfwSetErrorCallback(ErrorCallback);
 
   cout << "[Info] GLFW initialisation" << endl;
 
