@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <inttypes.h>
 
 #include <iostream>
@@ -10,7 +11,6 @@ struct rgbcolor {
   constexpr rgbcolor(uint8_t rgba[4]) : r{rgba[0]}, g{rgba[0]}, b{rgba[0]}, a{rgba[0]} {} 
   constexpr rgbcolor(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_ = 255) : r{r_}, g{g_}, b{b_}, a{a_} {} 
   rgbcolor(const char (& hex)[9]) {
-    std::cout << std::string(hex, hex+1) << std::endl;
     r = std::stoi(std::string(hex+0, hex+2), nullptr, 16);
     g = std::stoi(std::string(hex+2, hex+4), nullptr, 16);
     b = std::stoi(std::string(hex+4, hex+6), nullptr, 16);
@@ -18,6 +18,8 @@ struct rgbcolor {
   }
   uint8_t r, g, b, a;
 };
+
+
 
 using color3 = std::array<rgbcolor, 3>;
 
@@ -54,4 +56,25 @@ namespace palettes {
     rgbcolor("980B63FF"), rgbcolor("CA5FA7FF"), rgbcolor("F596FDFF"), rgbcolor("F7D8FDFF"), rgbcolor("FAD932FF")
   };
 
+}
+
+namespace impl {
+inline float clamp(float val, float minval, float maxval) {
+  return std::min(std::max(val, minval), maxval);
+}
+}
+
+inline rgbcolor blend(const rgbcolor & start, const rgbcolor & end, float t) {
+  float out[4] = {
+    start.r * (1.0f - t) + end.r * t,
+    start.g * (1.0f - t) + end.g * t,
+    start.b * (1.0f - t) + end.b * t,
+    start.a * (1.0f - t) + end.a * t
+  };
+  return rgbcolor{uint8_t(start.r), uint8_t(start.g), uint8_t(start.b), uint8_t(start.a)};
+}
+
+inline rgbcolor blend(const std::vector< rgbcolor > & palette, float t) {
+  int k = floor(impl::clamp(t * (palette.size() - 1), 0, palette.size() - 2));
+  return blend(palette[k], palette[k+1], t * (palette.size()-1) - k);
 }
