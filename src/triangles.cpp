@@ -43,7 +43,12 @@ in vec4 triangle_color;
 out vec4 frag_color;
 
 void main() {
-  frag_color = triangle_color;
+  if (gl_FrontFacing) {
+    frag_color = triangle_color;
+  } else {
+    float avg = dot(vec3(0.33, 0.33, 0.33), triangle_color.xyz);
+    frag_color = vec4(avg, avg, 2 * avg, triangle_color.w);
+  }
 }
 )frag");
 
