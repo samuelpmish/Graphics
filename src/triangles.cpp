@@ -266,12 +266,20 @@ void Triangles::clear() {
   dirty = true;
 }
 
-void Triangles::append(const std::array< glm::vec3, 3 > & tri) {
+void Triangles::append(const Tri3 & tri) {
   vertices.push_back(tri);
   normals.push_back(normalVectors(tri));
   colors.push_back({color, color, color});
   dirty = true;
 }
+
+void Triangles::append(const Tri3 & tri, const std::array< rgbcolor, 3 > & c) {
+  vertices.push_back(tri);
+  normals.push_back(normalVectors(tri));
+  colors.push_back(c);
+  dirty = true;
+}
+
 
 //void Triangles::append(const std::vector< Triangle > & more_triangles) {
 //  data.reserve(data.size() + more_triangles.size());

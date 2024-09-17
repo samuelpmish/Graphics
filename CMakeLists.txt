@@ -15,8 +15,8 @@ add_library(graphics STATIC
   src/glError.cpp
   src/Shader.hpp
   src/Shader.cpp
-  src/Scene.hpp
-  src/Scene.cpp
+  #src/Scene.hpp
+  #src/Scene.cpp
   src/spheres.hpp
   src/spheres.cpp
   src/cylinders.hpp
