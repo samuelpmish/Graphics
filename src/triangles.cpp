@@ -263,6 +263,7 @@ Triangles::Triangles() : program({
 void Triangles::clear() {
   vertices.clear();
   normals.clear();
+  colors.clear();
   dirty = true;
 }
 
@@ -332,6 +333,9 @@ void Triangles::draw(const Camera & camera) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(color3) * colors.size(), &colors[0], GL_STATIC_DRAW);
     dirty = false;
   }
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glDisable(GL_CULL_FACE);
