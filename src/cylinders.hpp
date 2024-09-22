@@ -11,6 +11,8 @@
 
 #include "spheres.hpp"
 
+namespace Graphics {
+
 struct Cylinder {
   Sphere endpoints[2];
 };
@@ -47,3 +49,5 @@ struct Cylinders {
   glm::vec4 light;
 
 };
+
+}

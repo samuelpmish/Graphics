@@ -281,7 +281,6 @@ void Triangles::append(const Tri3 & tri, const std::array< rgbcolor, 3 > & c) {
   dirty = true;
 }
 
-
 //void Triangles::append(const std::vector< Triangle > & more_triangles) {
 //  data.reserve(data.size() + more_triangles.size());
 //  for (uint32_t i = 0; i < more_triangles.size(); i++) {

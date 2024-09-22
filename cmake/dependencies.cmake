@@ -53,6 +53,11 @@ add_library(imgui STATIC
   ${PROJECT_SOURCE_DIR}/src/imgui/imgui_impl_glfw.cpp
   ${PROJECT_SOURCE_DIR}/src/imgui/imgui_impl_opengl3.h
   ${PROJECT_SOURCE_DIR}/src/imgui/imgui_impl_opengl3.cpp
+
+  ${PROJECT_SOURCE_DIR}/src/imgui/implot.h
+  ${PROJECT_SOURCE_DIR}/src/imgui/implot.cpp
+  ${PROJECT_SOURCE_DIR}/src/imgui/implot_internal.h
+  ${PROJECT_SOURCE_DIR}/src/imgui/implot_items.cpp
 )
 
 target_include_directories(imgui PUBLIC .)

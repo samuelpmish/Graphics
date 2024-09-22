@@ -11,6 +11,8 @@
 
 #include "glError.hpp"
 
+namespace Graphics {
+
 static constexpr int angular_divisions = 16;
 
 static const std::vector< glm::vec3 > cylinder_vertices = [](){
@@ -177,5 +179,7 @@ void Cylinders::draw(const Camera & camera) {
   glCheckError(__FILE__, __LINE__);
 
   program.unuse();
+
+}
 
 }
