@@ -31,7 +31,7 @@ void main() {
   if (light.w != 0) {
     float ambient = 1.0 - light.w;
     float diffuse = clamp(dot(normal,light.xyz), 0.0, 1.0) * light.w;
-    triangle_color *= ambient + diffuse;
+    triangle_color.xyz *= ambient + diffuse;
   }
 }
 )vert");
