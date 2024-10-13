@@ -44,7 +44,13 @@ void main() {
   cylinder_color = rgba;
 
   vec3 e3 = cyl_end.xyz - cyl_start.xyz;
-  vec3 e1 = normalize(cross(e3, vec3(0,0,1)));
+  //vec3 e1 = vec3(1,0,0);
+  vec3 e1 = cross(e3, vec3(0,0,1));
+  if (length(e1) < 1.0e-5) {
+    e1 = vec3(1,0,0);
+  } else {
+    e1 = normalize(e1);
+  }
   vec3 e2 = normalize(cross(e3, e1));
   float r = cyl_start.w + corners.z * (cyl_end.w - cyl_start.w);
 
