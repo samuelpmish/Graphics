@@ -9,6 +9,8 @@
 #include "Camera.hpp"
 #include "rgbcolor.hpp"
 
+namespace Graphics {
+
 struct Sphere {
   glm::vec3 center;
   float radius;
@@ -47,3 +49,5 @@ struct Spheres {
   glm::vec4 light;
 
 };
+
+}
