@@ -73,7 +73,7 @@ float Camera::fov() const {
 }
 
 void Camera::set_fov(float fov){
-  m_fov = std::max(std::min(fov, 2.8f), 0.3f);
+  m_fov = std::max(std::min(fov, 2.6f), 0.1f);
 }
 
 float Camera::aspect() const {

@@ -19,8 +19,6 @@ struct rgbcolor {
   uint8_t r, g, b, a;
 };
 
-
-
 using color3 = std::array<rgbcolor, 3>;
 
 namespace colors {
@@ -71,7 +69,7 @@ inline rgbcolor blend(const rgbcolor & start, const rgbcolor & end, float t) {
     start.b * (1.0f - t) + end.b * t,
     start.a * (1.0f - t) + end.a * t
   };
-  return rgbcolor{uint8_t(start.r), uint8_t(start.g), uint8_t(start.b), uint8_t(start.a)};
+  return rgbcolor{uint8_t(out[0]), uint8_t(out[1]), uint8_t(out[2]), uint8_t(out[3])};
 }
 
 inline rgbcolor blend(const std::vector< rgbcolor > & palette, float t) {
