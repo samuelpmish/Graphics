@@ -96,6 +96,7 @@ std::string to_string(PatchType type) {
     case PatchType::QUAD8: return "Quad8";
     case PatchType::QUAD9: return "Quad9";
   }
+  return {};
 }
 
 int vertices_per_patch(PatchType type) {
@@ -105,6 +106,7 @@ int vertices_per_patch(PatchType type) {
     case PatchType::QUAD8: return 8;
     case PatchType::QUAD9: return 9;
   }
+  return {};
 }
 
 extern const std::string tri6_tcs_shader_color;
